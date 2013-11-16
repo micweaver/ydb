@@ -32,7 +32,7 @@ a debug tool for php like gdb, you can look the variable value of running script
   
   "wenda.so.com/?c=IndexController&f=indexAction&t= 1"
   
-   the parameter t stand for profile your script,the ydb will display a time rand desc for all the function in the indexAction function  of class  IndexController on your webpage and
+   the parameter t stand for profile your script,the ydb will display a time rank desc for all the function in the indexAction function  of class  IndexController on your webpage and
   stop the script.
   
   
