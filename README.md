@@ -23,7 +23,7 @@ a debug  tool for php like gdb, a php zend extension. you can look the variable 
   
   f: the functions name;
   
-  v: the variable name,or if you do not provide this parameter,the ydb will dump all of the variable;
+  v: the variable name,or if you do not provide this parameter,the ydb will dump all of the variable in the function
   
   
   
@@ -34,8 +34,8 @@ a debug  tool for php like gdb, a php zend extension. you can look the variable 
   
   "wenda.so.com/?c=IndexController&f=indexAction&t= 1"
   
-   the parameter t stand for profile your script,the ydb will display a time rank desc for all the function in the indexAction function  of class  IndexController on your webpage and
-  stop the script.
+   the parameter t stand for profiling your script,the ydb will display a time cost rank  for all the function in the indexAction function  of class  IndexController on your webpage and
+  stop the script desc  descending order.
   
   
   
