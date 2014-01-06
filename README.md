@@ -4,7 +4,7 @@ ydb
 
 a debug  tool for php like gdb, a php zend extension. you can look the variable value of running script, and it can profile your web script, it's better than the other tools like xdebug or xhprof
 
-像gdb一样的php调试工具，用扩展实现，在运行过程中查看变量值，也可以进行性能测试，就像xdebug和xhprof中提供的功能，但使用更方便.更详细的文档介绍见 http://blog.csdn.net/micweaver/article/details/17891163
+ydb 是像gdb一样的php调试工具，用扩展实现，可以在运行过程中查看变量值，也可以进行性能测试，而不用对源代码进行任何更改，就像xdebug和xhprof 中提供的功能，但使用更方便.更详细的文档介绍见 http://blog.csdn.net/micweaver/article/details/17891163
 
 
 
