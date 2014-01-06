@@ -6,7 +6,7 @@
 
 
 #define YDB_NAME       "ydb"
-#define YDB_VERSION    "0.01"
+#define YDB_VERSION    "0.5"
 #define YDB_AUTHOR     "lizhonghua"
 #define YDB_COPYRIGHT  "Copyright (c) 2013-2014 by lizhonghua"
 #define YDB_COPYRIGHT_SHORT "Copyright (c) 2013-2014"
