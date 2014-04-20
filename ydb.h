@@ -4,7 +4,6 @@
 #include "php.h"
 #include "zend_extensions.h"
 
-
 #define YDB_NAME       "ydb"
 #define YDB_VERSION    "0.5"
 #define YDB_AUTHOR     "lizhonghua"
@@ -13,8 +12,7 @@
 #define YDB_URL        "http://ydb.org"
 #define YDB_URL_FAQ    "http://ydb.org/docs/faq#api"
 
-
-#ifdef PHP2_5
+#if(PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION < 3)
 
 #define MAKE_COPY_ZVAL(ppzv, pzv) \
 		*(pzv) = **(ppzv);            \
@@ -29,62 +27,96 @@ INIT_PZVAL((pzv));
 #define INIT_HASH_SIZE 15
 
 #define MAX_PARAMS_LEN 100
+#define MAX_NEWVAR_LEN 1000
+#define MAX_KEY_LEN 100
+#define MAX_URL_LEN 1000
 
 #define DIR_MAX_LEN 200
 
 #define YDB_LOG_FILE "/log/ydbinfo.log"
 
-ZEND_BEGIN_MODULE_GLOBALS(ydb)
+#define CURL_RES_FIRST_LINE "HTTP/1.1 200 OK"
+#define CURL_RES_FLAG_HEADER "YDB-YDB : 1"
 
-		int is_look_variable; //æ˜¯å¦æŸ¥çœ‹å˜é‡å€¼
-		int is_timer; //æ˜¯å¦è®¡æ—¶
-		char* ydb_cur_classname; //å½“å‰æ‰§è¡Œä½äºŽçš„ç±»
-		char* ydb_cur_funname; //å½“å‰æ‰§è¡Œä½äºŽçš„å‡½æ•°
+#define MAX_HEAD_LINE_LEN 200
 
-		HashTable* dst_symbol_table;
-		zend_op_array  *  ydb_cur_op_array; //å½“å‰æ‰§è¡Œå‡½æ•°çš„op_array
-		zend_op_array  *  ydb_dst_op_array; // è¦æ‰§è¡Œè§‚å¯Ÿçš„å‡½æ•°op_array
+ZEND_BEGIN_MODULE_GLOBALS (ydb)
 
-		char* input_classname; //è¾“å…¥çš„ç±»å
-		char* input_funname; //è¾“å…¥çš„å‡½æ•°å
-		char* input_varname; //è¾“å…¥çš„å˜é‡å
+        int is_look_variable;			//ÊÇ·ñ²é¿´±äÁ¿Öµ
+        int is_timer;					//ÊÇ·ñ¼ÆÊ±
+        int is_net_timer;				//ÊÇ·ñ¶ÔÍøÂçÇëÇó½øÐÐ¼ÆÊ±
+        char *ydb_cur_classname;		//µ±Ç°Ö´ÐÐÎ»ÓÚµÄÀà
+        char *ydb_cur_funname;			//µ±Ç°Ö´ÐÐÎ»ÓÚµÄº¯Êý
 
-		HashTable* ydb_varn; //å­˜æ”¾å˜é‡å€¼
+        HashTable *dst_symbol_table;
+        zend_op_array *ydb_cur_op_array;	//µ±Ç°Ö´ÐÐº¯ÊýµÄop_array
+        zend_op_array *ydb_dst_op_array;	// ÒªÖ´ÐÐ¹Û²ìµÄº¯Êýop_array
 
-		int ydb_shouldreturn;
+        char *input_classname;			//ÊäÈëµÄÀàÃû
+        char *input_funname;			//ÊäÈëµÄº¯ÊýÃû
+        char *input_varname;			//ÊäÈëµÄ±äÁ¿Ãû
+        char *input_new_var;			//ÊäÈëµÄÐÂ±äÁ¿Öµ
+        HashTable *ydb_varn;			//´æ·Å±äÁ¿Öµ
 
-		int   is_post; //æ˜¯å¦æ˜¯postè¯·æ±‚
-		char  input_post_classname[MAX_PARAMS_LEN];
-		char  input_post_funname[MAX_PARAMS_LEN];
-		char  input_post_varname[MAX_PARAMS_LEN];
+        int ydb_shouldreturn;
 
-		char* parent_classname;
-		char* parent_funname;
+        int is_post;					//ÊÇ·ñÊÇpostÇëÇó
+        char input_post_classname[MAX_PARAMS_LEN];
+        char input_post_funname[MAX_PARAMS_LEN];
+        char input_post_varname[MAX_PARAMS_LEN];
+        char input_post_newvar[MAX_NEWVAR_LEN];
 
-		zend_op_array* timer_op_array;
+        char *parent_classname;
+        char *parent_funname;
 
-		struct timeval start,start_sum; //è®¡æ—¶å¼€å§‹æ—¶é—´
-		struct timeval end,end_sum; //è®¡æ—¶ç»“æŸæ—¶é—´
+        zend_op_array *timer_op_array;
 
-		int usetimer;
-		int is_sum_time_begin; //æ˜¯å¦å¼€å§‹æ€»è®¡æ—¶
-		int ydb_timer;
+        struct timeval start, start_sum;	//¼ÆÊ±¿ªÊ¼Ê±¼ä
+        struct timeval end, end_sum;	//¼ÆÊ±½áÊøÊ±¼ä
 
-		HashTable* timer_fun; //å­˜æ”¾å‡½æ•°è®¡æ—¶å€¼
+        int usetimer;
+        int is_sum_time_begin;			//ÊÇ·ñ¿ªÊ¼×Ü¼ÆÊ±
+        int ydb_timer;
 
-		int uselog; //æ˜¯å¦ä½¿ç”¨æ—¥å¿—è®°å½•ç»“æžœ
+        HashTable *timer_fun;			//´æ·Åº¯Êý¼ÆÊ±Öµ
 
-		int is_get_debug_params; //æ˜¯å¦å·²ç»èŽ·å¾—äº†è°ƒè¯•å‚æ•°
+        int uselog;						//ÊÇ·ñÊ¹ÓÃÈÕÖ¾¼ÇÂ¼½á¹û
 
-ZEND_END_MODULE_GLOBALS(ydb)
+        int is_get_debug_params;		//ÊÇ·ñÒÑ¾­»ñµÃÁËµ÷ÊÔ²ÎÊý
 
-ZEND_DECLARE_MODULE_GLOBALS(ydb)
+        HashTable *input_vars;			//ÊäÈëµÄ±äÁ¿Êý×é
+        int is_set_new_var;				// ÊÇ·ñÒÑ¸²¸ÇÁË±äÁ¿
 
+        void (*orig_curl_init) (INTERNAL_FUNCTION_PARAMETERS);
+        void (*orig_curl_setopt) (INTERNAL_FUNCTION_PARAMETERS);
+        void (*orig_curl_exec) (INTERNAL_FUNCTION_PARAMETERS);
+
+        HashTable *key_count;			// ÏàÍ¬keyµÄ¼ÆÊý
+
+        int is_replace_new_fun;			//ÊÇ·ñÒÑÌæ»»ÁËÐÂº¯Êýhandler
+        int is_get_remote_res;			//ÊÇ·ñ´Ó±»µ÷ÓÃ¶Ë»ñµÃÁË½á¹û
+
+        char *old_curl_url;
+        char new_curl_url[MAX_URL_LEN];
+
+        char *curl_res;					// curl·µ»ØµÄ½á¹û,°üÀ¨Í·²¿
+
+        int is_send_header;				//ÊÇ·ñÒÑ¾­·¢ËÍÁËydbÍ·²¿
+
+        int is_dump_code;				//ÊÇ·ñ´òÓ¡Ö´ÐÐ´úÂë
+        int is_get_code_info;			//ÊÇ·ñ»ñµÃÁËÖ´ÐÐ´úÂë¶ÎÐÅÏ¢
+        char *file_name;				//ÎÄ¼þÃû
+        int line_start;					//ÆðÊ¼ÐÐ
+        int line_end;					//½áÊøÐÐ
+
+        int depth;						//Ô¶³Ì·ÃÎÊÉî¶È
+
+ZEND_END_MODULE_GLOBALS (ydb)
+
+	ZEND_DECLARE_MODULE_GLOBALS (ydb)
 #ifdef ZTS
 #define YG(v) TSRMG(ydb_globals_id, zend_ydb_globals *, v)
 #else
 #define YG(v) (ydb_globals.v)
 #endif
-
 #endif
-
