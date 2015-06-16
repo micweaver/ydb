@@ -16,7 +16,7 @@ ydb 是像gdb一样的php调试工具，用扩展实现，可以在运行过程�
 
 
 
-所有信息查看都在url中输入参数进行，而不用更改源代码，更详细的文档介绍见 http://blog.csdn.net/micweaver/article/details/17891163
+所有信息查看都在url中输入参数进行，而不用更改源代码，更详细的文档包括使用方法介绍见 http://blog.csdn.net/micweaver/article/details/17891163
 
 
 
