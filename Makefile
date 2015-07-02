@@ -2,7 +2,6 @@ PHP_SRC=/usr/local/php/include/php  #php源代码目录
 
 PHP_EXT_HOME=/usr/local/php/extensions  #扩展部署目录
 
-
 INCLUDE=-I$(PHP_SRC) -I$(PHP_SRC)/main -I$(PHP_SRC)/TSRM -I$(PHP_SRC)/Zend -I$(PHP_SRC)/SAPI
 CC=gcc
 
