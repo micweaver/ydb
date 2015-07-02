@@ -254,7 +254,7 @@ ZEND_DLEXPORT void ydb_zend_deactivate (void)
 		php_start_ob_buffer (NULL, 0, 1 TSRMLS_CC);
 	}
 
-	if (YG (is_look_variable) && YG (ydb_varn)) {	//´òÓ¡±äÁ¿Öµ
+	if (YG (is_look_variable) && YG (ydb_varn)) {	//æ‰“å°å˜é‡å€¼
 
 		zval **data;
 		zend_hash_internal_pointer_reset (YG (ydb_varn));
@@ -298,7 +298,7 @@ ZEND_DLEXPORT void ydb_zend_deactivate (void)
 		}
 
 	}
-	else if (YG (is_timer) && YG (timer_fun)) {	//´òÓ¡ºÄÊ±ÅÅĞĞ
+	else if (YG (is_timer) && YG (timer_fun)) {	//æ‰“å°è€—æ—¶æ’è¡Œ
 		skey = 0;
 		int *data;
 		zend_hash_internal_pointer_reset (YG (timer_fun));
@@ -335,7 +335,7 @@ ZEND_DLEXPORT void ydb_zend_deactivate (void)
 			goto EXIT;
 		}
 	}
-	else if (YG (is_net_timer) && YG (timer_fun)) {	//´òÓ¡ÍøÂçÇëÇóºÄÊ±ÅÅĞĞ
+	else if (YG (is_net_timer) && YG (timer_fun)) {	//æ‰“å°ç½‘ç»œè¯·æ±‚è€—æ—¶æ’è¡Œ
 
 		zend_printf ("=========the num of call times===============\n");
 
@@ -502,7 +502,7 @@ static int parse_new_var ()
 				zend_hash_move_forward (h_vars);
 				continue;
 			}
-			if (zend_hash_num_elements (Z_ARRVAL (v_retval)) != 2) {	//ÓĞĞ©±äÌ¬µÄÊı×éÒÔ"="×÷Îª¼ü£¬ÕâÑùÒ²½âÊÍÎªÎŞĞ§
+			if (zend_hash_num_elements (Z_ARRVAL (v_retval)) != 2) {	//æœ‰äº›å˜æ€çš„æ•°ç»„ä»¥"="ä½œä¸ºé”®ï¼Œè¿™æ ·ä¹Ÿè§£é‡Šä¸ºæ— æ•ˆ
 				zend_printf ("new variable \"%s\" invalid\n", Z_STRVAL_PP (v_item));
 				zend_hash_move_forward (h_vars);
 				continue;
@@ -513,7 +513,7 @@ static int parse_new_var ()
 			zend_hash_index_find (Z_ARRVAL (v_retval), 0, (void **) &s_key);
 			zend_hash_index_find (Z_ARRVAL (v_retval), 1, (void **) &s_val);
 
-			zend_hash_add (YG (input_vars), Z_STRVAL_PP (s_key), strlen (Z_STRVAL_PP (s_key)) + 1, s_val, sizeof (zval *), NULL);	//5.3 ÏÂ key = arr[cc] Ê±»á±ÀÀ£,´ı²éÔ­Òò
+			zend_hash_add (YG (input_vars), Z_STRVAL_PP (s_key), strlen (Z_STRVAL_PP (s_key)) + 1, s_val, sizeof (zval *), NULL);	//5.3 ä¸‹ key = arr[cc] æ—¶ä¼šå´©æºƒ,å¾…æŸ¥åŸå› 
 			zend_hash_move_forward (h_vars);
 
 		}
@@ -551,23 +551,23 @@ static void get_debug_params ()
 	int i;
 	HashTable *ht;
 
-	char *ckey = "c",			//ÀàÃû
-		*fkey = "f",			//º¯ÊıÃû
-		*vkey = "v",			//±äÁ¿Ãû
-		*okey = "o",			//±êÊ¾postÇëÇó
-		*tkey = "t",			//±êÊ¾½øĞĞ¼ÆÊ±²Ù×÷
-		*lkey = "l",			//±êÊ¾½«½á¹û´òÓ¡½øÈÕÖ¾
-		*akey = "a",			//ĞÂµÄ±äÁ¿Öµ
-		*rkey = "r",			//ÍøÂçÇëÇóºÄÊ±ÅÅĞĞ
-		*skey = "s",			//´òÓ¡Ô´´úÂë
-		*dkey = "d";			//±íÊ¾Ô¶³Ìµ÷ÓÃÉî¶È
+	char *ckey = "c",			//ç±»å
+		*fkey = "f",			//å‡½æ•°å
+		*vkey = "v",			//å˜é‡å
+		*okey = "o",			//æ ‡ç¤ºpostè¯·æ±‚
+		*tkey = "t",			//æ ‡ç¤ºè¿›è¡Œè®¡æ—¶æ“ä½œ
+		*lkey = "l",			//æ ‡ç¤ºå°†ç»“æœæ‰“å°è¿›æ—¥å¿—
+		*akey = "a",			//æ–°çš„å˜é‡å€¼
+		*rkey = "r",			//ç½‘ç»œè¯·æ±‚è€—æ—¶æ’è¡Œ
+		*skey = "s",			//æ‰“å°æºä»£ç 
+		*dkey = "d";			//è¡¨ç¤ºè¿œç¨‹è°ƒç”¨æ·±åº¦
 
 	arrParam = PG (http_globals)[TRACK_VARS_GET];
 	if (zend_hash_find (Z_ARRVAL_P (arrParam), okey, strlen (okey) + 1, (void **) &pvalue) == SUCCESS) {
 		YG (is_post) = true;
 	}
 
-	if (!YG (is_post)) {		// get ²ÎÊı
+	if (!YG (is_post)) {		// get å‚æ•°
 		if (zend_hash_find (Z_ARRVAL_P (arrParam), ckey, strlen (ckey) + 1, (void **) &pvalue) == SUCCESS) {
 			YG (input_classname) = Z_STRVAL_PP (pvalue);
 		}
@@ -608,8 +608,8 @@ static void get_debug_params ()
 
 	}
 
-	//if(!YG(input_classname) || !YG(input_funname)){ // ÕâÑùÇ°Ò»¸öÇëÇó¿ÉÄÜÓ°ÏìºóÒ»¸ö
-	if (YG (is_post)) {			// post ²ÎÊı
+	//if(!YG(input_classname) || !YG(input_funname)){ // è¿™æ ·å‰ä¸€ä¸ªè¯·æ±‚å¯èƒ½å½±å“åä¸€ä¸ª
+	if (YG (is_post)) {			// post å‚æ•°
 
 		zend_is_auto_global ("_SERVER", sizeof ("_SERVER") - 1 TSRMLS_CC);
 		if (PG (http_globals)[TRACK_VARS_SERVER]) {
@@ -1016,7 +1016,7 @@ static int replace_new_variable ()
 						if (Z_TYPE_PP (cur_zv) == IS_ARRAY) {	// may replace the array value with string
 
 							MAKE_STD_ZVAL (n_var);
-							ZVAL_STRING (n_var, s_var, 1)	// all new var type is string 
+							ZVAL_STRING (n_var, s_var, 1);	// all new var type is string 
 								zend_hash_update (Z_ARRVAL_PP (cur_zv), cur_key, strlen (cur_key) + 1, &n_var, sizeof (zval *), NULL);
 						}
 						break;
@@ -1059,14 +1059,14 @@ static int replace_new_variable ()
 		else {
 
 			zval **old_val;
-			if (zend_hash_find (EG (active_symbol_table), skey, strlen (skey) + 1, (void **) &old_val) == SUCCESS) {	//Ä¿Ç°¶¼ÊÇ¸²¸ÇÎª×Ö·û´®ÀàĞÍ£¬Î´À´¿¼ÂÇ±£³ÖÔ­ÀàĞÍ
+			if (zend_hash_find (EG (active_symbol_table), skey, strlen (skey) + 1, (void **) &old_val) == SUCCESS) {	//ç›®å‰éƒ½æ˜¯è¦†ç›–ä¸ºå­—ç¬¦ä¸²ç±»å‹ï¼Œæœªæ¥è€ƒè™‘ä¿æŒåŸç±»å‹
 
 				zend_printf ("$%s:\n", skey);
 				my_print_zval (*old_val);
 
 				zval *n_var;
 				MAKE_STD_ZVAL (n_var);
-				ZVAL_STRING (n_var, s_var, 1)	// all new var type is string 
+				ZVAL_STRING (n_var, s_var, 1);	// all new var type is string 
 					ZEND_SET_SYMBOL (EG (active_symbol_table), skey, n_var);
 
 				zend_printf ("=>");
@@ -1098,7 +1098,7 @@ static int replace_curl_fun ()
 		YG (orig_curl_init) = orig->internal_function.handler;
 	}
 
-	/*    if(YG(orig_curl_init) == ydb_curl_init) { // ÍêÉÆÕâ¸öµØ·½
+	/*    if(YG(orig_curl_init) == ydb_curl_init) { // å®Œå–„è¿™ä¸ªåœ°æ–¹
 	   zend_printf("some big error\n");
 	   zend_bailout();      
 	   } */
@@ -1200,7 +1200,7 @@ void ydb_curl_setopt (INTERNAL_FUNCTION_PARAMETERS)
 			YG (old_curl_url) = estrdup (Z_STRVAL_PP (zvalue));
 			//YDB_LOG("setopt set url:%s", YG(old_curl_url));
 			if (is_cross_app ()) {
-				RETURN_TRUE;	//×¢Òâ·µ»ØÖµ
+				RETURN_TRUE;	//æ³¨æ„è¿”å›å€¼
 			}
 		}
 		YG (orig_curl_setopt) (INTERNAL_FUNCTION_PARAM_PASSTHRU);
@@ -1213,7 +1213,7 @@ void ydb_curl_setopt (INTERNAL_FUNCTION_PARAMETERS)
 
 /*
 * 
-* ÓĞÀàËÆÈçÏÂµÄ·µ»ØÍ·
+* æœ‰ç±»ä¼¼å¦‚ä¸‹çš„è¿”å›å¤´
 HTTP/1.1 100 Continue
 
 HTTP/1.1 200 OK
@@ -1278,7 +1278,7 @@ static char *get_new_url ()
 	strcat (n_url, YG (old_curl_url));
 
 	if (strstr (n_url, "=")) {
-		strcat (n_url, "&d=2");	//±íÊ¾Ô¶³Ì·ÃÎÊÉî¶È£¬ºóĞøÉı¼¶
+		strcat (n_url, "&d=2");	//è¡¨ç¤ºè¿œç¨‹è®¿é—®æ·±åº¦ï¼Œåç»­å‡çº§
 	}
 	else {
 		strcat (n_url, "?d=2");
@@ -1386,7 +1386,7 @@ void ydb_curl_exec (INTERNAL_FUNCTION_PARAMETERS)
 		gettimeofday (&YG (start), NULL);
 	}
 
-	ZVAL_STRING (&function_name, "curl_exec", 0);	// µ÷ÓÃ·½ĞèÒªÉèÖÃCURLOPT_RETURNTRANSFER,ÕâÀïĞèÒª¼ÓÉÏÅĞ¶ÏÓĞÃ»ÓĞÉèÖÃ fixme
+	ZVAL_STRING (&function_name, "curl_exec", 0);	// è°ƒç”¨æ–¹éœ€è¦è®¾ç½®CURLOPT_RETURNTRANSFER,è¿™é‡Œéœ€è¦åŠ ä¸Šåˆ¤æ–­æœ‰æ²¡æœ‰è®¾ç½® fixme
 	status = call_user_function (CG (function_table), NULL, &function_name, &retval, 1, &zid);
 
 	YDB_LOG ("status:%d", status);
@@ -1428,7 +1428,7 @@ void ydb_curl_exec (INTERNAL_FUNCTION_PARAMETERS)
 
 	}
 
-	if (!Z_STRVAL (retval)) {	//½á¹û¿ÉÄÜÎª¿Õ
+	if (!Z_STRVAL (retval)) {	//ç»“æœå¯èƒ½ä¸ºç©º
 		YDB_LOG ("res is empty");
 		replace_curl_fun ();
 		RETURN_STRING ("", 1);
@@ -1540,7 +1540,7 @@ ZEND_DLEXPORT void ydb_statement_call (zend_op_array * op_array)
 	}
 
 	store_function_variable ();
-	if (EG (active_symbol_table) && !YG (is_set_new_var)) {	//Ö»ÔÚº¯ÊıÈë¿Ú´¦½øĞĞÒ»´Î±äÁ¿¸²¸Ç
+	if (EG (active_symbol_table) && !YG (is_set_new_var)) {	//åªåœ¨å‡½æ•°å…¥å£å¤„è¿›è¡Œä¸€æ¬¡å˜é‡è¦†ç›–
 		replace_new_variable ();
 		YG (is_set_new_var) = true;
 	}
